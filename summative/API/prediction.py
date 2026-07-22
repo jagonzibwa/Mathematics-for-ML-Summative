@@ -36,22 +36,29 @@ app = FastAPI(
     version="1.0.0",
 )
 
-# CORS reasoning:
-# - allow_origins=["*"]: the API is consumed by a Flutter mobile app (requests do not
-#   originate from a fixed web domain) and by graders testing from Swagger UI or their
-#   own machines, so no single origin can be whitelisted. The API is public and
-#   stateless - it serves predictions only.
-# - allow_credentials=False: we use no cookies or sessions, and browsers forbid
-#   credentials together with a wildcard origin. Restricting this is a deliberate
-#   security choice, not an omission.
+# CORS reasoning (what is allowed and what is restricted):
+# - allow_origins: an explicit whitelist instead of a wildcard. CORS is a *browser*
+#   mechanism, so the only browser contexts that legitimately call this API are the
+#   Swagger UI served from this service's own domain and a developer's local test
+#   pages. The Flutter app is a NATIVE mobile client - its HTTP requests carry no
+#   Origin header and are not subject to CORS - so it needs no wildcard to work.
+#   Every other web origin is restricted by default.
 # - allow_methods=["GET", "POST"]: the API only exposes GET (health/docs) and POST
 #   (predict/retrain). DELETE, PUT and PATCH are restricted because no endpoint
 #   mutates or removes a resource.
 # - allow_headers=["Content-Type"]: the only header clients need to send JSON or
 #   multipart uploads; everything else stays restricted.
+# - allow_credentials=False: the API is stateless - no cookies, sessions or auth
+#   tokens - so credentialed cross-origin requests are deliberately disabled.
+ALLOWED_ORIGINS = [
+    "https://studentgradeapi.onrender.com",  # Swagger UI on the deployed service
+    "http://localhost:8000",                 # local uvicorn during development
+    "http://127.0.0.1:8000",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=False,
     allow_methods=["GET", "POST"],
     allow_headers=["Content-Type"],
