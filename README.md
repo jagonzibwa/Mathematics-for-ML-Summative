@@ -1,4 +1,4 @@
-# Student Performance Prediction — Linear Regression Summative
+# Linear Regression Summative: Student Performance Prediction 
 
 ## Mission & Problem
 
