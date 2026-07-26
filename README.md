@@ -22,9 +22,7 @@ Example request body for `/predict`:
 }
 ```
 
-## Video demo
-
-- **YouTube:** https://youtu.be/TODO  <!-- TODO: add link after recording -->
+## Video demo: (https://youtu.be/qEzk_RNLm60)
 
 ## Repository structure
 
